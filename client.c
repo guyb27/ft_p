@@ -39,12 +39,20 @@ int		main(int ac, char **av)
 	int					port;
 	int					sock;
 	char				buff[1024];
+	int					octets_read;
 
 	if (ac != 0b00000011)//TEST BINAIRE (3)
 		return (usage(av[0]));
+	bzero(buff, sizeof(buff));
 	port = atoi(av[2]);
 	sock = create_client(av[1], port);
-	write(sock, "bonjour\n", 8);
+	while ((octets_read = read(0, buff, 1024)))
+	{
+		buff[octets_read - 1] = '\0';
+		write(sock, buff, strlen(buff) + 1);
+		if (!strcmp(buff, "quit"))
+			break ;
+	}
 	close(sock);
 	return (0);
 }
